@@ -38,18 +38,14 @@ const String colorNames[NUM_COLORS] = {
   "BLUE"
 };
 
-// uint16_t minColorValues[NUM_COLORS] = { 53, 128, 37 };
-// uint16_t minColorValues[NUM_COLORS] = { 60, 84, 59 }; // custom
+
 // uint16_t minColorValues[NUM_COLORS] = { 0, 0, 0 };  // custom
-uint16_t minColorValues[NUM_COLORS] = { 500, 1700, 800 }; // custom
-// uint16_t minColorValues[NUM_COLORS] = { 60, 84, 59 }; // custom
+// uint16_t minColorValues[NUM_COLORS] = { 500, 1700, 800 }; // for open environment, open pcb
+uint16_t minColorValues[NUM_COLORS] = { 1347, 4505, 2165 };  // for closed environment, filter filled with water, sensor enclouser on it.
 
-
-// uint16_t maxColorValues[NUM_COLORS] = { 206, 408, 213 };
-// uint16_t maxColorValues[NUM_COLORS] = { 2570, 3300, 2700}; //custom
-uint16_t maxColorValues[NUM_COLORS] = { 2750, 8000, 5000}; //custom
+// uint16_t maxColorValues[NUM_COLORS] = { 2750, 8000, 5000}; //  for open environment, open pcb
+uint16_t maxColorValues[NUM_COLORS] = { 2003, 6344, 3440 };  //  for closed environment, filter filled with water, sensor enclouser on it.
 // uint16_t maxColorValues[NUM_COLORS] = { 0, 0, 0 };  // custom
-// uint16_t maxColorValues[NUM_COLORS] = { 964, 1378, 666}; //custom
 
 int led_arr[4] = { 4, 6, 5, 7 };
 const int numLEDs = sizeof(led_arr) / sizeof(led_arr[0]);
@@ -122,7 +118,7 @@ void setBrightnessFromSerial() {
 }
 
 void setMinMaxValuesFromSerial() {
-  Serial.println("Enter new minColorValues (e.g., 'M 10 20 30'):");
+  Serial.println("Enter new minColorValues (e.g., 'Min 10 20 30'):");
   while (!Serial.available())
     ;
   Serial.read();  // Discard the 'M' character
@@ -134,7 +130,7 @@ void setMinMaxValuesFromSerial() {
     Serial.print("New minColorValues[" + String(i) + "]: " + String(minColorValues[i]) + "\r\n");
   }
 
-  Serial.println("Enter new maxColorValues (e.g., 'M 100 150 200'):");
+  Serial.println("Enter new maxColorValues (e.g., 'Max 100 150 200'):");
   while (!Serial.available())
     ;
   Serial.read();  // Discard the 'M' character
@@ -251,6 +247,14 @@ void loop() {
           Serial.println("Warning: " + colorNames[color] + " below MIN");
         }
       }
+
+      
+      // Read the IR value separately
+      // Serial.println("IR: " + String(rgb.ir()));
+      uint16_t irValue = rgb.readIR();
+
+      // Print IR value
+      Serial.println("\n rawColor[IR] :" + String(irValue) + "\n");
 
       Serial.println("Raw: " + String(rawColor[RED]) + ", "
                      + String(rawColor[GREEN]) + ", "
